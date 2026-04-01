@@ -1,11 +1,14 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
-	import * as THREE from 'three';
+	import { onMount } from 'svelte';
 
 	let container: HTMLDivElement;
+	let THREE: any;
 	let animationId: number;
 
-	onMount(() => {
+	onMount(async () => {
+		// Dynamically import Three.js from CDN to reduce bundle size
+		THREE = await import('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js');
+
 		// Scene setup
 		const scene = new THREE.Scene();
 		const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
@@ -17,7 +20,7 @@
 		container.appendChild(renderer.domElement);
 
 		// Create floating code blocks
-		const codeBlocks: THREE.Mesh[] = [];
+		const codeBlocks: any[] = [];
 		const geometries = [
 			new THREE.BoxGeometry(1, 1, 1),
 			new THREE.BoxGeometry(2, 0.5, 0.3),
@@ -26,7 +29,6 @@
 			new THREE.BoxGeometry(1.2, 1.2, 1.2),
 		];
 
-		// Material with wireframe style
 		const material = new THREE.MeshBasicMaterial({
 			color: 0x1a1a2e,
 			wireframe: true,
@@ -34,8 +36,7 @@
 			opacity: 0.3
 		});
 
-		// Create 30 floating code blocks
-		for (let i = 0; i < 30; i++) {
+		for (let i = 0; i < 25; i++) {
 			const geo = geometries[Math.floor(Math.random() * geometries.length)];
 			const mesh = new THREE.Mesh(geo, material.clone());
 			
@@ -60,7 +61,7 @@
 
 		// Add floating particles
 		const particlesGeometry = new THREE.BufferGeometry();
-		const particlesCount = 200;
+		const particlesCount = 150;
 		const positions = new Float32Array(particlesCount * 3);
 
 		for (let i = 0; i < particlesCount * 3; i += 3) {
@@ -121,19 +122,16 @@
 			camera.position.y += (targetY * 5 - camera.position.y) * 0.05;
 			camera.lookAt(scene.position);
 
-			// Animate code blocks
 			const time = Date.now() * 0.001;
-			codeBlocks.forEach((block) => {
+			codeBlocks.forEach((block: any) => {
 				block.rotation.x += block.userData.rotationSpeedX;
 				block.rotation.y += block.userData.rotationSpeedY;
 				block.position.y = block.userData.originalY + Math.sin(time * block.userData.floatSpeed * 100 + block.userData.floatOffset) * 2;
 			});
 
-			// Rotate particles slowly
 			particles.rotation.y += 0.0005;
 			particles.rotation.x += 0.0002;
 
-			// Move grid
 			gridHelper.position.z = (time * 2) % 2 - 15;
 
 			renderer.render(scene, camera);
@@ -141,13 +139,13 @@
 
 		animate();
 
-		// Cleanup
 		return () => {
 			window.removeEventListener('mousemove', onMouseMove);
 			window.removeEventListener('resize', onResize);
-			cancelAnimationFrame(animationId);
-			renderer.dispose();
-			container.removeChild(renderer.domElement);
+			if (animationId) cancelAnimationFrame(animationId);
+			if (renderer && container.contains(renderer.domElement)) {
+				container.removeChild(renderer.domElement);
+			}
 		};
 	});
 </script>
