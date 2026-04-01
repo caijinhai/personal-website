@@ -24,6 +24,8 @@
   "type": "module",
   "dependencies": {
     "@supabase/ssr": "^0.10.0",
-    "@supabase/supabase-js": "^2.101.1"
+    "@supabase/supabase-js": "^2.101.1",
+    "@types/three": "^0.183.1",
+    "three": "^0.183.2"
   }
 }

@@ -5,15 +5,15 @@
 <div class="min-h-[80vh] flex items-center justify-center px-6">
     <div class="w-full max-w-md">
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-            <p class="text-gray-600">Sign in to continue</p>
+            <h1 class="text-3xl font-bold text-white mb-2">Welcome Back</h1>
+            <p class="text-gray-400">Sign in to continue</p>
         </div>
         
-        <div class="bg-gray-50 rounded-2xl p-8 space-y-6">
+        <div class="bg-gray-900/80 rounded-2xl p-8 border border-gray-800 backdrop-blur-sm space-y-6">
             <button 
                 on:click={signInWithGoogle}
                 disabled={loading}
-                class="w-full flex items-center justify-center gap-3 px-6 py-3 bg-white border border-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                class="w-full flex items-center justify-center gap-3 px-6 py-3 bg-white border border-gray-600 text-gray-900 font-medium rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
             >
                 {#if loading}
                     <span class="w-5 h-5 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin"></span>
@@ -29,18 +29,18 @@
             </button>
             
             {#if error}
-                <p class="text-sm text-red-600 text-center">{error}</p>
+                <p class="text-sm text-red-400 text-center">{error}</p>
             {/if}
         </div>
         
         <p class="text-center text-sm text-gray-500 mt-6">
-            <a href="/" class="hover:text-gray-900 transition-colors">← Back to Home</a>
+            <a href="/" class="hover:text-emerald-400 transition-colors">← Back to Home</a>
         </p>
     </div>
 </div>
 
 <script>
-    import { createBrowserClient } from '@supabase/ssr';
+    import { createBrowserClient, isBrowser } from '@supabase/ssr';
     import { page } from '$app/stores';
     
     $: supabase = $page.data.supabaseUrl && $page.data.supabaseAnonKey 
