@@ -1,43 +1,88 @@
-<script lang="ts">
-    let name = '';
-    let email = '';
-    let message = '';
-    let submitted = false;
-    
-    async function handleSubmit() {
-        await new Promise(r => setTimeout(r, 1000));
-        submitted = true;
-    }
-</script>
-
 <svelte:head>
-    <title>Contact</title>
+    <title>Contact - Cesar Cai</title>
+    <meta name="description" content="Get in touch with Cesar Cai for collaborations or inquiries." />
 </svelte:head>
 
-<div class="min-h-screen bg-base-100 py-20 px-4">
-    <div class="max-w-xl mx-auto">
-        <h1 class="text-4xl font-bold mb-4 text-center">Get in Touch</h1>
+<div class="max-w-4xl mx-auto px-6 py-20">
+    <section class="space-y-12">
+        <div class="space-y-4">
+            <p class="text-sm font-medium text-gray-500 tracking-wide uppercase">Contact</p>
+            <h1 class="text-4xl md:text-5xl font-bold tracking-tight">
+                Let's Work<br />
+                <span class="text-gray-400">Together</span>
+            </h1>
+            <p class="text-lg text-gray-600 max-w-xl">
+                Have a project in mind or just want to chat? Feel free to reach out.
+            </p>
+        </div>
         
-        {#if submitted}
-            <div class="alert alert-success mb-8">Message sent!</div>
-        {/if}
-        
-        <form on:submit|preventDefault={handleSubmit} class="card bg-base-200 shadow-xl">
-            <div class="card-body space-y-6">
-                <div class="form-control">
-                    <label class="label" for="name"><span class="label-text">Name</span></label>
-                    <input type="text" id="name" bind:value={name} class="input input-bordered" required />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div class="space-y-8">
+                <div class="space-y-2">
+                    <h3 class="font-semibold text-gray-900">Email</h3>
+                    <a href="mailto:hello@cesarcai.site" class="text-gray-600 hover:text-gray-900 transition-colors">
+                        hello@cesarcai.site
+                    </a>
                 </div>
-                <div class="form-control">
-                    <label class="label" for="email"><span class="label-text">Email</span></label>
-                    <input type="email" id="email" bind:value={email} class="input input-bordered" required />
+                
+                <div class="space-y-2">
+                    <h3 class="font-semibold text-gray-900">GitHub</h3>
+                    <a href="https://github.com/caijinhai" target="_blank" rel="noopener" class="text-gray-600 hover:text-gray-900 transition-colors">
+                        @caijinhai
+                    </a>
                 </div>
-                <div class="form-control">
-                    <label class="label" for="message"><span class="label-text">Message</span></label>
-                    <textarea id="message" bind:value={message} class="textarea textarea-bordered h-40" required></textarea>
+                
+                <div class="space-y-2">
+                    <h3 class="font-semibold text-gray-900">Twitter</h3>
+                    <a href="https://twitter.com" target="_blank" rel="noopener" class="text-gray-600 hover:text-gray-900 transition-colors">
+                        @cesarcai
+                    </a>
                 </div>
-                <button type="submit" class="btn btn-primary">Send Message</button>
             </div>
-        </form>
-    </div>
+            
+            <div class="bg-gray-50 rounded-2xl p-8">
+                <form class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                        <input 
+                            type="text" 
+                            id="name" 
+                            name="name"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                            placeholder="Your name"
+                        />
+                    </div>
+                    
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                            placeholder="you@example.com"
+                        />
+                    </div>
+                    
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                        <textarea 
+                            id="message" 
+                            name="message"
+                            rows="4"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent resize-none"
+                            placeholder="Your message..."
+                        ></textarea>
+                    </div>
+                    
+                    <button 
+                        type="submit"
+                        class="w-full px-6 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
+                    >
+                        Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
 </div>
