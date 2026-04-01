@@ -1,8 +1,8 @@
 <script lang="ts">
     import { createBrowserClient } from '@supabase/ssr';
-    import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+    import { page } from '$app/stores';
     
-    const supabase = createBrowserClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY);
+    $: supabase = createBrowserClient($page.data.supabaseUrl, $page.data.supabaseAnonKey);
     
     let loading = false;
     let error = '';
