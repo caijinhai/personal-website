@@ -1,5 +1,5 @@
 <script lang="ts">
-    import '../app.css';
+    import '../../app.css';
     import { page } from '$app/stores';
     
     $: isActive = (path: string) => $page.url.pathname === path;
