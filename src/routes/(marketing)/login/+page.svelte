@@ -1,13 +1,19 @@
 <script lang="ts">
-    import { createBrowserClient } from '@supabase/ssr';
+    import { createBrowserClient, isBrowser } from '@supabase/ssr';
     import { page } from '$app/stores';
     
-    $: supabase = createBrowserClient($page.data.supabaseUrl, $page.data.supabaseAnonKey);
+    $: supabase = $page.data.supabaseUrl && $page.data.supabaseAnonKey 
+        ? createBrowserClient($page.data.supabaseUrl, $page.data.supabaseAnonKey) 
+        : null;
     
     let loading = false;
     let error = '';
     
     async function signInWithGoogle() {
+        if (!supabase) {
+            error = 'Supabase not configured';
+            return;
+        }
         loading = true;
         error = '';
         
