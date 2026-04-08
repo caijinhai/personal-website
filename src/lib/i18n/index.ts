@@ -1,8 +1,24 @@
 import { writable } from 'svelte/store';
+import { browser } from '$app/environment';
 
 export type Locale = 'en' | 'zh';
 
-export const locale = writable<Locale>('en');
+function getInitialLocale(): Locale {
+    if (browser) {
+        const stored = localStorage.getItem('locale');
+        if (stored === 'en' || stored === 'zh') return stored;
+    }
+    return 'en';
+}
+
+export const locale = writable<Locale>(getInitialLocale());
+
+// Subscribe to locale changes and save to localStorage
+if (browser) {
+    locale.subscribe((value) => {
+        localStorage.setItem('locale', value);
+    });
+}
 
 const translations: Record<Locale, Record<string, string>> = {
 	en: {
@@ -44,7 +60,7 @@ const translations: Record<Locale, Record<string, string>> = {
 		'skills.devops.desc': 'Building CI/CD pipelines, automating infrastructure with Ansible, Shell, and modern DevOps tools.',
 
 		// Tech Stack
-		'tech.title': '// Tech Stack',
+		'tech.title': 'Tech Stack',
 		'tech.languages': 'Languages',
 		'tech.frameworks': 'Frameworks',
 		'tech.databases': 'Databases',
@@ -125,7 +141,7 @@ const translations: Record<Locale, Record<string, string>> = {
 		'skills.devops.desc': '构建 CI/CD 管道，使用 Ansible、Shell 和现代 DevOps 工具实现基础设施自动化。',
 
 		// Tech Stack
-		'tech.title': '// 技术栈',
+		'tech.title': '技术栈',
 		'tech.languages': '编程语言',
 		'tech.frameworks': '框架',
 		'tech.databases': '数据库',

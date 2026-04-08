@@ -1,11 +1,32 @@
 <script lang="ts">
     import '../../app.css';
     import { page } from '$app/stores';
-    import { locale, toggleLocale, t } from '$lib/i18n';
+    import { locale, toggleLocale } from '$lib/i18n';
     import ThreeBackground from '$lib/components/ThreeBackground.svelte';
     import CodingAnimation from '$lib/components/CodingAnimation.svelte';
+    import { browser } from '$app/environment';
     
     $: isActive = (path: string) => $page.url.pathname === path || (path === '/' && $page.url.pathname === '/');
+    
+    // Get translations reactively
+    const translations = {
+        en: {
+            home: 'Home',
+            about: 'About',
+            blog: 'Blog',
+            github: 'GitHub',
+            switchLang: '中文'
+        },
+        zh: {
+            home: '首页',
+            about: '关于',
+            blog: '博客',
+            github: 'GitHub',
+            switchLang: 'EN'
+        }
+    };
+    
+    $: langText = translations[$locale];
 </script>
 
 <ThreeBackground />
@@ -21,24 +42,24 @@
             
             <div class="flex items-center gap-8">
                 <a href="/" class={`text-sm font-medium transition-colors ${isActive('/') ? 'text-emerald-400' : 'text-gray-400 hover:text-white'}`}>
-                    {$t('nav.home')}
+                    {langText.home}
                 </a>
                 <a href="/about" class={`text-sm font-medium transition-colors ${isActive('/about') ? 'text-emerald-400' : 'text-gray-400 hover:text-white'}`}>
-                    {$t('nav.about')}
+                    {langText.about}
                 </a>
                 <a href="/blog" class={`text-sm font-medium transition-colors ${isActive('/blog') ? 'text-emerald-400' : 'text-gray-400 hover:text-white'}`}>
-                    {$t('nav.blog')}
+                    {langText.blog}
                 </a>
                 <a href="https://github.com/caijinhai" target="_blank" rel="noopener" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    {$t('nav.github')}
+                    {langText.github}
                 </a>
                 
                 <!-- Language Switcher -->
                 <button 
-                    on:click={toggleLocale}
+                    on:click={() => browser && toggleLocale()}
                     class="px-3 py-1 text-xs font-mono border border-gray-600 rounded hover:border-emerald-500 hover:text-emerald-400 transition-colors"
                 >
-                    {$locale === 'en' ? '中文' : 'EN'}
+                    {langText.switchLang}
                 </button>
             </div>
         </nav>
@@ -52,7 +73,7 @@
     <!-- Footer -->
     <footer class="border-t border-gray-800 py-8 px-6 bg-black/30">
         <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-            <p>© 2026 Cesar Cai. {$t('footer.copyright')}</p>
+            <p>© 2026 Cesar Cai. All rights reserved.</p>
             <div class="flex gap-6">
                 <a href="https://github.com/caijinhai" target="_blank" rel="noopener" class="hover:text-emerald-400 transition-colors">GitHub</a>
                 <a href="/blog" class="hover:text-emerald-400 transition-colors">Blog</a>
