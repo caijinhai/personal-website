@@ -1,68 +1,204 @@
+<script lang="ts">
+    import { locale, t } from '$lib/i18n';
+    import { onMount } from 'svelte';
+    import { env } from '$env/dynamic/public';
+
+    interface BlogPost {
+        id: string;
+        title: string;
+        content: string;
+        excerpt: string;
+        created_at: string;
+        updated_at: string;
+        tags: string[];
+        cover_image?: string;
+        published: boolean;
+    }
+
+    let posts: BlogPost[] = [];
+    let loading = true;
+    let error = '';
+    let supabaseConfigured = false;
+
+    onMount(async () => {
+        const supabaseUrl = env.PUBLIC_SUPABASE_URL || '';
+        const supabaseAnonKey = env.PUBLIC_SUPABASE_ANON_KEY || '';
+        
+        if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://placeholder.supabase.co') {
+            supabaseConfigured = false;
+            loading = false;
+            return;
+        }
+
+        supabaseConfigured = true;
+
+        try {
+            const response = await fetch(`${supabaseUrl}/rest/v1/posts?select=*&published=eq.true&order=created_at.desc`, {
+                headers: {
+                    'apikey': supabaseAnonKey,
+                    'Authorization': `Bearer ${supabaseAnonKey}`
+                }
+            });
+
+            if (response.ok) {
+                posts = await response.json();
+            } else {
+                error = 'Failed to fetch posts';
+            }
+        } catch (e) {
+            error = 'Failed to connect to database';
+        } finally {
+            loading = false;
+        }
+    });
+
+    function formatDate(dateStr: string): string {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString($locale === 'en' ? 'en-US' : 'zh-CN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
+    // Demo posts for when Supabase is not configured
+    const demoPosts: BlogPost[] = [
+        {
+            id: '1',
+            title: $locale === 'en' ? 'Building Scalable Backend Systems with Go' : '使用 Go 构建可扩展后端系统',
+            excerpt: $locale === 'en' 
+                ? 'A deep dive into designing and implementing scalable backend architectures using Go, Docker, and Kubernetes.'
+                : '深入探讨使用 Go、Docker 和 Kubernetes 设计和实现可扩展的后端架构。',
+            content: '',
+            created_at: '2026-03-15T10:00:00Z',
+            updated_at: '2026-03-15T10:00:00Z',
+            tags: ['Go', 'Backend', 'DevOps'],
+            published: true
+        },
+        {
+            id: '2',
+            title: $locale === 'en' ? 'AI Agent Workflows with OpenClaw' : '使用 OpenClaw 构建 AI 智能体工作流',
+            excerpt: $locale === 'en'
+                ? 'How I built autonomous AI agent workflows using OpenClaw and Claude Code for automated task execution.'
+                : '如何使用 OpenClaw 和 Claude Code 构建自主 AI 智能体工作流实现自动化任务执行。',
+            content: '',
+            created_at: '2026-03-10T10:00:00Z',
+            updated_at: '2026-03-10T10:00:00Z',
+            tags: ['AI', 'OpenClaw', 'Automation'],
+            published: true
+        },
+        {
+            id: '3',
+            title: $locale === 'en' ? 'DevOps Best Practices for Small Teams' : '小团队 DevOps 最佳实践',
+            excerpt: $locale === 'en'
+                ? 'Practical DevOps strategies and tools that helped our small team achieve enterprise-level deployment automation.'
+                : '实用的 DevOps 策略和工具，帮助我们的小团队实现企业级部署自动化。',
+            content: '',
+            created_at: '2026-03-05T10:00:00Z',
+            updated_at: '2026-03-05T10:00:00Z',
+            tags: ['DevOps', 'Docker', 'CI/CD'],
+            published: true
+        }
+    ];
+</script>
+
 <svelte:head>
-    <title>Blog - Cesar Cai</title>
-    <meta name="description" content="Articles about web development, AI, and technology." />
+    <title>{$locale === 'en' ? 'Blog - Cesar Cai' : '博客 - 蔡金海'}</title>
+    <meta name="description" content="Articles about backend development, AI technologies, DevOps, and lessons learned along the way." />
 </svelte:head>
 
 <div class="max-w-4xl mx-auto px-6 py-20">
     <section class="space-y-12">
+        <!-- Header -->
         <div class="space-y-4">
             <p class="text-sm font-medium text-emerald-400 tracking-wide uppercase font-mono">
-                // Blog
+                {$t('blog.title')}
             </p>
             <h1 class="text-4xl md:text-5xl font-bold tracking-tight">
-                Thoughts &<br />
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">Discoveries</span>
+                {$t('blog.headline')}<br />
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">{$t('blog.headline2')}</span>
             </h1>
             <p class="text-lg text-gray-400 max-w-xl">
-                Writing about web development, AI technologies, and lessons learned along the way.
+                {$t('blog.subtitle')}
             </p>
         </div>
         
+        <!-- Blog Posts -->
         <div class="border-t border-gray-800 pt-12">
-            <div class="space-y-6">
-                <!-- Blog Post Placeholder -->
-                <div class="p-6 rounded-xl bg-gray-900/50 border border-gray-800 backdrop-blur-sm">
-                    <div class="flex items-center gap-3 text-sm text-gray-500 mb-4">
-                        <span class="text-emerald-400">Coming Soon</span>
-                        <span class="w-1 h-1 rounded-full bg-gray-600"></span>
-                        <span>2026</span>
-                    </div>
-                    <h2 class="text-2xl font-semibold text-white mb-2">
-                        First blog post is on its way
-                    </h2>
-                    <p class="text-gray-400 leading-relaxed">
-                        Stay tuned! I'm working on my first technical articles covering topics in web development, AI, and more.
-                    </p>
+            {#if loading}
+                <!-- Loading State -->
+                <div class="space-y-6">
+                    {#each [1, 2, 3] as _}
+                        <div class="p-6 rounded-xl bg-gray-900/50 border border-gray-800 animate-pulse">
+                            <div class="h-4 bg-gray-700 rounded w-1/4 mb-4"></div>
+                            <div class="h-6 bg-gray-700 rounded w-3/4 mb-2"></div>
+                            <div class="h-4 bg-gray-700 rounded w-full mb-2"></div>
+                            <div class="h-4 bg-gray-700 rounded w-2/3"></div>
+                        </div>
+                    {/each}
                 </div>
-                
-                <div class="p-6 rounded-xl bg-gray-900/30 border border-gray-800/50 backdrop-blur-sm opacity-50">
-                    <div class="flex items-center gap-3 text-sm text-gray-500 mb-4">
-                        <span>JavaScript</span>
-                        <span class="w-1 h-1 rounded-full bg-gray-600"></span>
-                        <span>2026</span>
-                    </div>
-                    <h2 class="text-2xl font-semibold text-white mb-2">
-                        Understanding Modern JavaScript Frameworks
-                    </h2>
-                    <p class="text-gray-400 leading-relaxed">
-                        A deep dive into React, Vue, Svelte and when to use each one.
-                    </p>
+            {:else if error}
+                <!-- Error State -->
+                <div class="p-6 rounded-xl bg-red-900/20 border border-red-800 text-center">
+                    <p class="text-red-400">{error}</p>
                 </div>
-                
-                <div class="p-6 rounded-xl bg-gray-900/30 border border-gray-800/50 backdrop-blur-sm opacity-50">
-                    <div class="flex items-center gap-3 text-sm text-gray-500 mb-4">
-                        <span>AI</span>
-                        <span class="w-1 h-1 rounded-full bg-gray-600"></span>
-                        <span>2026</span>
-                    </div>
-                    <h2 class="text-2xl font-semibold text-white mb-2">
-                        Building AI-Powered Applications
-                    </h2>
-                    <p class="text-gray-400 leading-relaxed">
-                        Practical guide to integrating LLMs into your applications.
-                    </p>
+            {:else if !supabaseConfigured || posts.length === 0}
+                <!-- Demo Posts (when Supabase not configured) -->
+                <div class="space-y-6">
+                    {#each demoPosts as post}
+                        <a 
+                            href="/blog/{post.id}" 
+                            class="block group p-6 rounded-xl bg-gray-900/50 border border-gray-800 backdrop-blur-sm hover:border-emerald-500/50 transition-all duration-300"
+                        >
+                            <article class="space-y-3">
+                                <div class="flex items-center gap-3 text-sm text-gray-500">
+                                    <span class="text-emerald-400">{post.tags[0]}</span>
+                                    <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+                                    <span>{formatDate(post.created_at)}</span>
+                                </div>
+                                <h2 class="text-xl font-semibold text-white group-hover:text-emerald-400 transition-colors">
+                                    {post.title}
+                                </h2>
+                                <p class="text-gray-400 leading-relaxed">
+                                    {post.excerpt}
+                                </p>
+                                <div class="flex items-center gap-2 text-sm text-emerald-400 pt-2">
+                                    <span>{$t('blog.readMore')}</span>
+                                </div>
+                            </article>
+                        </a>
+                    {/each}
                 </div>
-            </div>
+            {:else}
+                <!-- Real Posts from Supabase -->
+                <div class="space-y-6">
+                    {#each posts as post}
+                        <a 
+                            href="/blog/{post.id}" 
+                            class="block group p-6 rounded-xl bg-gray-900/50 border border-gray-800 backdrop-blur-sm hover:border-emerald-500/50 transition-all duration-300"
+                        >
+                            <article class="space-y-3">
+                                <div class="flex items-center gap-3 text-sm text-gray-500">
+                                    {#if post.tags && post.tags.length > 0}
+                                        <span class="text-emerald-400">{post.tags[0]}</span>
+                                        <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+                                    {/if}
+                                    <span>{formatDate(post.created_at)}</span>
+                                </div>
+                                <h2 class="text-xl font-semibold text-white group-hover:text-emerald-400 transition-colors">
+                                    {post.title}
+                                </h2>
+                                <p class="text-gray-400 leading-relaxed">
+                                    {post.excerpt || post.content.substring(0, 150)}...
+                                </p>
+                                <div class="flex items-center gap-2 text-sm text-emerald-400 pt-2">
+                                    <span>{$t('blog.readMore')}</span>
+                                </div>
+                            </article>
+                        </a>
+                    {/each}
+                </div>
+            {/if}
         </div>
     </section>
 </div>
