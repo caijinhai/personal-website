@@ -12,7 +12,7 @@
 		'  "coding": true,',
 		'  "passion": "build cool stuff",',
 		'  "status": "in progress...",',
-		'  "coffee": ∞',
+		'  "coffee": "infinite"',
 		'}'
 	];
 
@@ -83,7 +83,7 @@
 						{:else if line.includes('"coffee"')}
 							<span class="text-purple-400">"coffee"</span>
 							<span class="text-gray-400">:</span>
-							<span class="text-amber-400">∞</span>
+							<span class="text-amber-400">"infinite"</span>
 						{:else if line === '{'}
 							<span class="text-gray-400">{line}</span>
 						{:else if line === '}'}

@@ -94,8 +94,7 @@
   <span class="text-emerald-400">"name"</span>: <span class="text-green-400">"Cesar Cai"</span>,
   <span class="text-emerald-400">"title"</span>: <span class="text-green-400">"{$locale === 'en' ? 'Backend Engineer' : '后端工程师'}"</span>,
   <span class="text-emerald-400">"skills"</span>: <span class="text-yellow-400">["Python", "Go", "PHP", "Docker", "K8s"]</span>,
-  <span class="text-emerald-400">"passion"</span>: <span class="text-green-400">"{$locale === 'en' ? 'Building great products' : '打造优秀产品'}"</span>,
-  <span class="text-emerald-400">"status"</span>: <span class="text-emerald-400">"{$locale === 'en' ? 'open to work' : '寻求工作机会'}"</span>
+  <span class="text-emerald-400">"passion"</span>: <span class="text-green-400">"{$locale === 'en' ? 'Building great products' : '打造优秀产品'}"</span>
 <span class="text-purple-400">&#125;</span></code></pre>
             </div>
         </div>
