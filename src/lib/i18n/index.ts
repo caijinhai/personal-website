@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 import { browser } from '$app/environment';
 
 export type Locale = 'en' | 'zh';
@@ -185,8 +185,7 @@ const translations: Record<Locale, Record<string, string>> = {
 };
 
 export function t(key: string): string {
-	let currentLocale: Locale = 'en';
-	locale.subscribe((v) => (currentLocale = v))();
+	const currentLocale = get(locale);
 	return translations[currentLocale][key] || key;
 }
 

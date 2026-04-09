@@ -16,11 +16,17 @@
     }
 
     let posts: BlogPost[] = [];
-    let loading = true;
+    let loading = false;
     let error = '';
     let supabaseConfigured = false;
 
     onMount(async () => {
+        // For now, always use demo posts
+        supabaseConfigured = false;
+        loading = false;
+
+        // TODO: Uncomment when Supabase is properly configured
+        /*
         const supabaseUrl = env.PUBLIC_SUPABASE_URL || '';
         const supabaseAnonKey = env.PUBLIC_SUPABASE_ANON_KEY || '';
         
@@ -50,6 +56,7 @@
         } finally {
             loading = false;
         }
+        */
     });
 
     function formatDate(dateStr: string): string {
@@ -62,7 +69,9 @@
     }
 
     // Demo posts for when Supabase is not configured
-    const demoPosts: BlogPost[] = [
+    function getDemoPosts(): BlogPost[] {
+        const isEn = $locale === 'en';
+        return [
         {
             id: '1',
             title: $locale === 'en' ? 'Building Scalable Backend Systems with Go' : '使用 Go 构建可扩展后端系统',
@@ -100,10 +109,13 @@
             published: true
         }
     ];
+    }
+
+    $: demoPosts = getDemoPosts();
 </script>
 
 <svelte:head>
-    <title>{$locale === 'en' ? 'Blog - Cesar Cai' : '博客 - 蔡金海'}</title>
+    <title>Blog - Cesar Cai</title>
     <meta name="description" content="Articles about backend development, AI technologies, DevOps, and lessons learned along the way." />
 </svelte:head>
 
@@ -112,14 +124,14 @@
         <!-- Header -->
         <div class="space-y-4">
             <p class="text-sm font-medium text-emerald-400 tracking-wide uppercase font-mono">
-                {$t('blog.title')}
+                {t('blog.title')}
             </p>
             <h1 class="text-4xl md:text-5xl font-bold tracking-tight">
-                {$t('blog.headline')}<br />
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">{$t('blog.headline2')}</span>
+                {t('blog.headline')}<br />
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">{t('blog.headline2')}</span>
             </h1>
             <p class="text-lg text-gray-400 max-w-xl">
-                {$t('blog.subtitle')}
+                {t('blog.subtitle')}
             </p>
         </div>
         
@@ -163,7 +175,7 @@
                                     {post.excerpt}
                                 </p>
                                 <div class="flex items-center gap-2 text-sm text-emerald-400 pt-2">
-                                    <span>{$t('blog.readMore')}</span>
+                                    <span>{t('blog.readMore')}</span>
                                 </div>
                             </article>
                         </a>
@@ -192,7 +204,7 @@
                                     {post.excerpt || post.content.substring(0, 150)}...
                                 </p>
                                 <div class="flex items-center gap-2 text-sm text-emerald-400 pt-2">
-                                    <span>{$t('blog.readMore')}</span>
+                                    <span>{t('blog.readMore')}</span>
                                 </div>
                             </article>
                         </a>

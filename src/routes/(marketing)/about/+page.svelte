@@ -7,10 +7,11 @@
     import { locale } from '$lib/i18n';
 
     const techStack = {
-        languages: ['Python', 'PHP', 'Go', 'JavaScript', 'TypeScript'],
-        frameworks: ['Django', 'Laravel', 'Gin', 'Vue.js', 'React'],
-        databases: ['MySQL', 'Redis', 'MongoDB', 'PostgreSQL'],
-        tools: ['Docker', 'Kubernetes', 'Ansible', 'Shell', 'Git', 'GitLab', 'Jenkins']
+        languages: ['Python', 'PHP', 'Go', 'JavaScript', 'TypeScript', 'C++'],
+        frameworks: ['Django', 'Laravel', 'Gin', 'Vue.js', 'React', 'AWS Lambda'],
+        databases: ['MySQL', 'Redis', 'MongoDB', 'PostgreSQL', 'InfluxDB', 'Elasticsearch'],
+        tools: ['Docker', 'Kubernetes', 'Ansible', 'Shell', 'Git', 'GitLab', 'Jenkins', 'CUDA', 'PyTorch'],
+        aiTools: ['OpenClaw', 'Claude Code', 'DeepSeek', 'OpenAI API', 'Anthropic API']
     };
 
     const translations = {
@@ -18,9 +19,9 @@
             title: '// About Me',
             headline: 'Building the future,',
             headline2: 'one line at a time.',
-            desc1: "I'm a backend engineer based in China, passionate about building robust systems and great products.",
-            desc2: "With 3-4 years of experience in full-stack development, I've worked with companies like Vivo and Qunsheng Software. I specialize in Python, PHP, Go, and modern backend technologies.",
-            desc3: "I'm a quick learner, detail-oriented, and always eager to explore new technologies. Currently focusing on AI applications and automation.",
+            desc1: "I'm a backend senior engineer based in Beijing, passionate about building robust systems and AI-powered applications.",
+            desc2: "With 8 years of experience in full-stack development, I've worked with leading companies like Baidu, Vivo, and Qunsheng Software. I specialize in backend development, GPU inference, and AI applications.",
+            desc3: "I'm a quick learner, detail-oriented, and always eager to explore new technologies. Currently focusing on AI agent workflows, GPU inference optimization, and automation at Baidu.",
             experience: 'Years Experience',
             projects: 'Projects Completed',
             technologies: 'Technologies Mastered',
@@ -29,25 +30,31 @@
             frameworks: 'Frameworks',
             databases: 'Databases',
             tools: 'Tools & Platforms',
+            aiTools: 'AI Tools',
             workExperience: 'Work Experience',
-            beijingCompany: 'Beijing Sanxiong Education',
+            baiduCompany: 'Beijing Baidu',
+            sanxiongCompany: 'Beijing Sanxiong Education',
+            qunshengCompany: 'Wuhan Qunsheng Software',
             present: 'Present',
-            wuhanCompany: 'Wuhan Qunsheng Software',
-            beijingDesc1: 'Built management backend with Vue + Django',
-            beijingDesc2: 'Video upload/audit/release management system',
-            beijingDesc3: 'Desktop tool with Vue + Electron + FFmpeg',
-            wuhanDesc1: 'Vivo smartphone distribution platform (K8s + Istio)',
-            wuhanDesc2: 'Built WebSocket messaging module',
-            wuhanDesc3: 'SCRM platform deployment (MongoDB/Redis/gRPC)',
-            wuhanDesc4: 'AWS Serverless project (Lambda + S3 + CloudFront)'
+            baiduDesc1: 'Digital human product capabilities: avatar/video generation, video processing pipeline',
+            baiduDesc2: 'Developed async framework, DAG workflow framework, 60+ service versions online',
+            baiduDesc3: 'GPU inference optimization, CPU/GPU heterogeneous computing support',
+            baiduDesc4: 'Data processing architecture for billion-scale video data, model training support',
+            sanxiongDesc1: 'Built management backend with Vue + Django',
+            sanxiongDesc2: 'Video upload/audit/release management system',
+            sanxiongDesc3: 'Desktop tool with Vue + Electron + FFmpeg',
+            qunshengDesc1: 'Vivo smartphone distribution platform (K8s + Istio)',
+            qunshengDesc2: 'Built WebSocket messaging module',
+            qunshengDesc3: 'SCRM platform deployment (MongoDB/Redis/gRPC)',
+            qunshengDesc4: 'AWS Serverless project (Lambda + S3 + CloudFront)'
         },
         zh: {
             title: '// 关于我',
             headline: '用代码构建未来，',
             headline2: '一行一行。',
-            desc1: '我是一名后端工程师，热爱构建健壮的系统和优秀的产品。',
-            desc2: '拥有 3-4 年全栈开发经验，曾在 vivo 和群硕软件等公司工作。我专精于 Python、PHP、Go 和现代后端技术。',
-            desc3: '我学习能力强，注重细节，始终热衷于探索新技术。目前专注于 AI 应用和自动化。',
+            desc1: '我是一名资深后端工程师，现居北京，热爱构建健壮的系统和 AI 驱动的应用。',
+            desc2: '拥有 8 年全栈开发经验，曾在百度、vivo 和群硕软件等知名企业工作。专精后端开发、GPU 推理和 AI 应用。',
+            desc3: '我学习能力强，注重细节，始终热衷于探索新技术。目前在百度从事 AI 智能体工作流、GPU 推理优化和自动化工作。',
             experience: '年工作经验',
             projects: '完成项目',
             technologies: '掌握技术',
@@ -56,17 +63,23 @@
             frameworks: '框架',
             databases: '数据库',
             tools: '工具与平台',
+            aiTools: 'AI 工具',
             workExperience: '工作经历',
-            beijingCompany: '北京三熊教育',
+            baiduCompany: '北京百度',
+            sanxiongCompany: '北京三熊教育',
+            qunshengCompany: '武汉群硕软件',
             present: '至今',
-            wuhanCompany: '武汉群硕软件',
-            beijingDesc1: '使用 Vue + Django 构建管理后台',
-            beijingDesc2: '视频上传/审核/上线管理系统',
-            beijingDesc3: '桌面工具：Vue + Electron + FFmpeg',
-            wuhanDesc1: 'vivo 智能手机分销平台 (K8s + Istio)',
-            wuhanDesc2: '构建 WebSocket 消息推送模块',
-            wuhanDesc3: 'SCRM 平台部署 (MongoDB/Redis/gRPC)',
-            wuhanDesc4: 'AWS Serverless 项目 (Lambda + S3 + CloudFront)'
+            baiduDesc1: '数字人产品能力建设：形象生成、视频生成、视频处理流水线',
+            baiduDesc2: '研发异步框架、DAG 工作流框架，60+ 版本服务上线维护',
+            baiduDesc3: 'GPU 推理优化，支持 CPU/GPU 异构计算',
+            baiduDesc4: '数据处理架构支持亿级视频数据处理和模型训练',
+            sanxiongDesc1: '使用 Vue + Django 构建管理后台',
+            sanxiongDesc2: '视频上传/审核/上线管理系统',
+            sanxiongDesc3: '桌面工具：Vue + Electron + FFmpeg',
+            qunshengDesc1: 'vivo 智能手机分销平台 (K8s + Istio)',
+            qunshengDesc2: '构建 WebSocket 消息推送模块',
+            qunshengDesc3: 'SCRM 平台部署 (MongoDB/Redis/gRPC)',
+            qunshengDesc4: 'AWS Serverless 项目 (Lambda + S3 + CloudFront)'
         }
     };
 
@@ -126,15 +139,15 @@
         <!-- Stats -->
         <div class="grid grid-cols-3 gap-8 py-8 border-y border-gray-800">
             <div class="text-center">
-                <p class="text-4xl font-bold text-white">3-4</p>
+                <p class="text-4xl font-bold text-white">8</p>
                 <p class="text-sm text-gray-500 mt-1">{t.experience}</p>
             </div>
             <div class="text-center">
-                <p class="text-4xl font-bold text-white">20+</p>
+                <p class="text-4xl font-bold text-white">30+</p>
                 <p class="text-sm text-gray-500 mt-1">{t.projects}</p>
             </div>
             <div class="text-center">
-                <p class="text-4xl font-bold text-emerald-400">30+</p>
+                <p class="text-4xl font-bold text-emerald-400">40+</p>
                 <p class="text-sm text-gray-500 mt-1">{t.technologies}</p>
             </div>
         </div>
@@ -221,6 +234,17 @@
                         {/each}
                     </div>
                 </div>
+                
+                <div class="space-y-3">
+                    <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide">{t.aiTools}</h3>
+                    <div class="flex flex-wrap gap-2">
+                        {#each techStack.aiTools as tool}
+                            <span class="px-4 py-2 bg-gray-900/80 text-emerald-300 text-sm font-medium rounded-full border border-emerald-700/50 hover:border-emerald-500/50 transition-colors">
+                                {tool}
+                            </span>
+                        {/each}
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -231,32 +255,47 @@
             </h2>
             
             <div class="space-y-6">
-                <div class="p-6 rounded-xl bg-gray-900/50 border border-gray-800 backdrop-blur-sm">
+                <div class="p-6 rounded-xl bg-gray-900/50 border border-emerald-900/30 backdrop-blur-sm">
                     <div class="flex items-start justify-between mb-4">
                         <div>
-                            <h3 class="font-semibold text-white">{t.beijingCompany}</h3>
-                            <p class="text-sm text-emerald-400">2019 - {t.present}</p>
+                            <h3 class="font-semibold text-white">{t.baiduCompany}</h3>
+                            <p class="text-sm text-emerald-400">2020.11 - {t.present}</p>
                         </div>
                     </div>
                     <div class="space-y-2 text-gray-400 text-sm">
-                        <p>• {t.beijingDesc1}</p>
-                        <p>• {t.beijingDesc2}</p>
-                        <p>• {t.beijingDesc3}</p>
+                        <p>• {t.baiduDesc1}</p>
+                        <p>• {t.baiduDesc2}</p>
+                        <p>• {t.baiduDesc3}</p>
+                        <p>• {t.baiduDesc4}</p>
                     </div>
                 </div>
 
                 <div class="p-6 rounded-xl bg-gray-900/50 border border-gray-800 backdrop-blur-sm">
                     <div class="flex items-start justify-between mb-4">
                         <div>
-                            <h3 class="font-semibold text-white">{t.wuhanCompany}</h3>
-                            <p class="text-sm text-gray-500">2017 - 2019</p>
+                            <h3 class="font-semibold text-white">{t.sanxiongCompany}</h3>
+                            <p class="text-sm text-gray-500">2019.04 - 2020.11</p>
                         </div>
                     </div>
                     <div class="space-y-2 text-gray-400 text-sm">
-                        <p>• {t.wuhanDesc1}</p>
-                        <p>• {t.wuhanDesc2}</p>
-                        <p>• {t.wuhanDesc3}</p>
-                        <p>• {t.wuhanDesc4}</p>
+                        <p>• {t.sanxiongDesc1}</p>
+                        <p>• {t.sanxiongDesc2}</p>
+                        <p>• {t.sanxiongDesc3}</p>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-xl bg-gray-900/50 border border-gray-800 backdrop-blur-sm">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="font-semibold text-white">{t.qunshengCompany}</h3>
+                            <p class="text-sm text-gray-500">2017.03 - 2019.03</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-gray-400 text-sm">
+                        <p>• {t.qunshengDesc1}</p>
+                        <p>• {t.qunshengDesc2}</p>
+                        <p>• {t.qunshengDesc3}</p>
+                        <p>• {t.qunshengDesc4}</p>
                     </div>
                 </div>
             </div>
