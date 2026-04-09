@@ -2,7 +2,6 @@
     import '../../app.css';
     import { page } from '$app/stores';
     import { locale, toggleLocale } from '$lib/i18n';
-    import ThreeBackground from '$lib/components/ThreeBackground.svelte';
     import CodingAnimation from '$lib/components/CodingAnimation.svelte';
     import { browser } from '$app/environment';
     
@@ -29,7 +28,6 @@
     $: langText = translations[$locale];
 </script>
 
-<ThreeBackground />
 <CodingAnimation />
 
 <div class="min-h-screen flex flex-col bg-transparent text-white">

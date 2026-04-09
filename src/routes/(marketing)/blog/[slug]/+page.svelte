@@ -21,7 +21,9 @@
     let error = '';
 
     // Demo posts for when Supabase is not configured
-    const demoPosts: Record<string, BlogPost> = {
+    function getDemoPosts(): Record<string, BlogPost> {
+        const isEn = $locale === 'en';
+        return {
         '1': {
             id: '1',
             title: $locale === 'en' ? 'Building Scalable Backend Systems with Go' : '使用 Go 构建可扩展后端系统',
@@ -313,6 +315,9 @@ Good DevOps practices aren't just for big companies. Small teams can achieve a l
             published: true
         }
     };
+    }
+
+    $: demoPosts = getDemoPosts();
 
     onMount(async () => {
         const slug = $page.params.slug;
