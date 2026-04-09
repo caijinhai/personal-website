@@ -1,7 +1,6 @@
 <script lang="ts">
     import { locale, t } from '$lib/i18n';
     import { page } from '$app/stores';
-    import { onMount } from 'svelte';
     import { env } from '$env/dynamic/public';
 
     interface BlogPost {
@@ -17,20 +16,19 @@
     }
 
     let post: BlogPost | null = null;
-    let loading = true;
     let error = '';
 
     // Demo posts for when Supabase is not configured
     function getDemoPosts(): Record<string, BlogPost> {
         const isEn = $locale === 'en';
         return {
-        '1': {
-            id: '1',
-            title: $locale === 'en' ? 'Building Scalable Backend Systems with Go' : '使用 Go 构建可扩展后端系统',
-            excerpt: $locale === 'en' 
+            '1': {
+                id: '1',
+                title: isEn ? 'Building Scalable Backend Systems with Go' : '使用 Go 构建可扩展后端系统',
+                excerpt: isEn 
                 ? 'A deep dive into designing and implementing scalable backend architectures using Go, Docker, and Kubernetes.'
                 : '深入探讨使用 Go、Docker 和 Kubernetes 设计和实现可扩展的后端架构。',
-            content: $locale === 'en' ? `
+            content: isEn ? `
 # Building Scalable Backend Systems with Go
 
 ## Introduction
@@ -112,11 +110,11 @@ Go 是后端开发的绝佳选择，因为：
         },
         '2': {
             id: '2',
-            title: $locale === 'en' ? 'AI Agent Workflows with OpenClaw' : '使用 OpenClaw 构建 AI 智能体工作流',
-            excerpt: $locale === 'en'
+            title: isEn ? 'AI Agent Workflows with OpenClaw' : '使用 OpenClaw 构建 AI 智能体工作流',
+            excerpt: isEn
                 ? 'How I built autonomous AI agent workflows using OpenClaw and Claude Code for automated task execution.'
                 : '如何使用 OpenClaw 和 Claude Code 构建自主 AI 智能体工作流实现自动化任务执行。',
-            content: $locale === 'en' ? `
+            content: isEn ? `
 # AI Agent Workflows with OpenClaw
 
 ## Overview
@@ -208,11 +206,11 @@ OpenClaw 与 Claude Code 结合为构建智能自动化系统提供了强大基�
         },
         '3': {
             id: '3',
-            title: $locale === 'en' ? 'DevOps Best Practices for Small Teams' : '小团队 DevOps 最佳实践',
-            excerpt: $locale === 'en'
+            title: isEn ? 'DevOps Best Practices for Small Teams' : '小团队 DevOps 最佳实践',
+            excerpt: isEn
                 ? 'Practical DevOps strategies and tools that helped our small team achieve enterprise-level deployment automation.'
                 : '实用的 DevOps 策略和工具，帮助我们的小团队实现企业级部署自动化。',
-            content: $locale === 'en' ? `
+            content: isEn ? `
 # DevOps Best Practices for Small Teams
 
 ## Introduction
@@ -317,43 +315,16 @@ Good DevOps practices aren't just for big companies. Small teams can achieve a l
     };
     }
 
-    $: demoPosts = getDemoPosts();
+    // Initialize demo posts immediately (not reactive)
+    const demoPosts = getDemoPosts();
 
-    onMount(async () => {
-        const slug = $page.params.slug;
-        const supabaseUrl = env.PUBLIC_SUPABASE_URL || '';
-        const supabaseAnonKey = env.PUBLIC_SUPABASE_ANON_KEY || '';
-        
-        if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://placeholder.supabase.co') {
-            // Use demo posts
-            post = demoPosts[slug] || null;
-            loading = false;
-            return;
-        }
-
-        try {
-            const response = await fetch(
-                `${supabaseUrl}/rest/v1/posts?id=eq.${slug}&select=*&published=eq.true`, 
-                {
-                    headers: {
-                        'apikey': supabaseAnonKey,
-                        'Authorization': `Bearer ${supabaseAnonKey}`
-                    }
-                }
-            );
-
-            if (response.ok) {
-                const data = await response.json();
-                post = data.length > 0 ? data[0] : null;
-            } else {
-                error = 'Failed to fetch post';
-            }
-        } catch (e) {
-            error = 'Failed to connect to database';
-        } finally {
-            loading = false;
-        }
-    });
+    // Get post from demo posts (server-side)
+    const slug = $page.params.slug;
+    const supabaseUrl = env.PUBLIC_SUPABASE_URL || '';
+    const supabaseAnonKey = env.PUBLIC_SUPABASE_ANON_KEY || '';
+    
+    // Always use demo posts for now
+    post = demoPosts[slug] || null;
 
     function formatDate(dateStr: string): string {
         const date = new Date(dateStr);
@@ -388,20 +359,12 @@ Good DevOps practices aren't just for big companies. Small teams can achieve a l
 </svelte:head>
 
 <div class="max-w-3xl mx-auto px-6 py-20">
-    {#if loading}
-        <!-- Loading State -->
-        <div class="animate-pulse space-y-6">
-            <div class="h-4 bg-gray-700 rounded w-1/4"></div>
-            <div class="h-10 bg-gray-700 rounded w-3/4"></div>
-            <div class="h-4 bg-gray-700 rounded w-1/2"></div>
-            <div class="h-64 bg-gray-700 rounded"></div>
-        </div>
-    {:else if error}
+    {#if error}
         <!-- Error State -->
         <div class="text-center py-20">
             <p class="text-red-400 mb-4">{error}</p>
             <a href="/blog" class="text-emerald-400 hover:text-emerald-300">
-                ← {$t('article.back')}
+                ← {t('article.back')}
             </a>
         </div>
     {:else if post}
@@ -409,7 +372,7 @@ Good DevOps practices aren't just for big companies. Small teams can achieve a l
         <article class="space-y-8">
             <!-- Back Link -->
             <a href="/blog" class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-emerald-400 transition-colors">
-                ← {$t('article.back')}
+                ← {t('article.back')}
             </a>
 
             <!-- Header -->
@@ -421,7 +384,7 @@ Good DevOps practices aren't just for big companies. Small teams can achieve a l
                         </span>
                         <span class="w-1 h-1 rounded-full bg-gray-600"></span>
                     {/if}
-                    <span>{$t('article.published')} {formatDate(post.created_at)}</span>
+                    <span>{t('article.published')} {formatDate(post.created_at)}</span>
                 </div>
 
                 <h1 class="text-3xl md:text-4xl font-bold text-white leading-tight">
@@ -459,7 +422,7 @@ Good DevOps practices aren't just for big companies. Small teams can achieve a l
             <h1 class="text-3xl font-bold text-white mb-4">Post not found</h1>
             <p class="text-gray-400 mb-8">The article you're looking for doesn't exist.</p>
             <a href="/blog" class="text-emerald-400 hover:text-emerald-300">
-                ← {$t('article.back')}
+                ← {t('article.back')}
             </a>
         </div>
     {/if}

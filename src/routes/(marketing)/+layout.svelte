@@ -2,7 +2,6 @@
     import '../../app.css';
     import { page } from '$app/stores';
     import { locale, toggleLocale } from '$lib/i18n';
-    import CodingAnimation from '$lib/components/CodingAnimation.svelte';
     import { browser } from '$app/environment';
     
     $: isActive = (path: string) => $page.url.pathname === path || (path === '/' && $page.url.pathname === '/');
@@ -27,8 +26,6 @@
     
     $: langText = translations[$locale];
 </script>
-
-<CodingAnimation />
 
 <div class="min-h-screen flex flex-col bg-transparent text-white">
     <!-- Navigation -->
