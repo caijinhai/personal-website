@@ -10,8 +10,8 @@
         title_zh: string;
         excerpt: string;
         excerpt_zh: string;
-        content_en: string;
-        content_zh: string;
+        content_en_path: string;
+        content_zh_path: string;
         created_at: string;
         tags: string[];
         published: boolean;
@@ -20,12 +20,13 @@
     let post: BlogPost | null = null;
     let loading = true;
     let error = '';
+    let content = '';
 
     onMount(async () => {
         const slug = $page.params.slug;
         const supabaseUrl = env.PUBLIC_SUPABASE_URL || '';
         const supabaseAnonKey = env.PUBLIC_SUPABASE_ANON_KEY || '';
-        
+
         if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://placeholder.supabase.co') {
             error = 'Supabase not configured';
             loading = false;
@@ -33,8 +34,9 @@
         }
 
         try {
+            // 1. 从数据库获取文章元数据
             const response = await fetch(
-                `${supabaseUrl}/rest/v1/posts?id=eq.${slug}&select=*&published=eq.true`, 
+                `${supabaseUrl}/rest/v1/posts?id=eq.${slug}&select=id,title,title_zh,excerpt,excerpt_zh,content_en_path,content_zh_path,tags,created_at&published=eq.true`,
                 {
                     headers: {
                         'apikey': supabaseAnonKey,
@@ -46,6 +48,19 @@
             if (response.ok) {
                 const data = await response.json();
                 post = data.length > 0 ? data[0] : null;
+
+                // 2. 从 Storage 读取内容
+                if (post) {
+                    const contentPath = $locale === 'en' ? post.content_en_path : post.content_zh_path;
+                    const contentUrl = `${supabaseUrl}/storage/v1/object/public/${contentPath}`;
+
+                    const contentResponse = await fetch(contentUrl);
+                    if (contentResponse.ok) {
+                        content = await contentResponse.text();
+                    } else {
+                        error = 'Failed to fetch content from storage';
+                    }
+                }
             } else {
                 error = 'Failed to fetch post';
             }
@@ -65,9 +80,9 @@
         });
     }
 
-    function renderMarkdown(content: string): string {
+    function renderMarkdown(markdownText: string): string {
         // Simple markdown to HTML conversion
-        return content
+        return markdownText
             .replace(/^### (.*$)/gim, '<h3 class="text-xl font-semibold text-white mt-8 mb-4">$1</h3>')
             .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-semibold text-white mt-10 mb-5">$1</h2>')
             .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold text-white mt-12 mb-6">$1</h1>')
@@ -75,6 +90,8 @@
             .replace(/\*(.*)\*/gim, '<em>$1</em>')
             .replace(/^\d+\. (.*$)/gim, '<li class="ml-6 list-decimal text-gray-300 mb-2">$1</li>')
             .replace(/^- (.*$)/gim, '<li class="ml-6 list-disc text-gray-300 mb-2">$1</li>')
+            .replace(/^-{3,}/gim, '<hr class="border-gray-700 my-8">')
+            .replace(/\n\n/gim, '</p><p class="mb-4">')
             .replace(/\n/gim, '<br />')
             .replace(/\|(.*)\|/gim, (match) => {
                 const cells = match.split('|').filter(c => c.trim());
@@ -136,12 +153,18 @@
                 {/if}
             </header>
 
-            <!-- Content -->
-            <div class="prose prose-invert prose-emerald max-w-none">
-                <div class="text-gray-300 leading-relaxed space-y-4">
-                    {@html renderMarkdown($locale === 'en' ? post.content_en : post.content_zh)}
+            <!-- Content from Storage -->
+            {#if content}
+                <div class="prose prose-invert prose-emerald max-w-none">
+                    <div class="text-gray-300 leading-relaxed">
+                        {@html renderMarkdown(content)}
+                    </div>
                 </div>
-            </div>
+            {:else}
+                <div class="text-center py-10">
+                    <p class="text-gray-400">Content loading...</p>
+                </div>
+            {/if}
 
             <!-- Tags -->
             {#if post.tags && post.tags.length > 0}
