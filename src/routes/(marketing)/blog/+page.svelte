@@ -6,27 +6,21 @@
     interface BlogPost {
         id: string;
         title: string;
-        content: string;
+        title_zh: string;
         excerpt: string;
+        excerpt_zh: string;
+        content: string;
         created_at: string;
-        updated_at: string;
         tags: string[];
-        cover_image?: string;
         published: boolean;
     }
 
     let posts: BlogPost[] = [];
-    let loading = false;
+    let loading = true;
     let error = '';
     let supabaseConfigured = false;
 
     onMount(async () => {
-        // For now, always use demo posts
-        supabaseConfigured = false;
-        loading = false;
-
-        // TODO: Uncomment when Supabase is properly configured
-        /*
         const supabaseUrl = env.PUBLIC_SUPABASE_URL || '';
         const supabaseAnonKey = env.PUBLIC_SUPABASE_ANON_KEY || '';
         
@@ -56,7 +50,6 @@
         } finally {
             loading = false;
         }
-        */
     });
 
     function formatDate(dateStr: string): string {
@@ -67,51 +60,6 @@
             day: 'numeric'
         });
     }
-
-    // Demo posts for when Supabase is not configured
-    function getDemoPosts(): BlogPost[] {
-        const isEn = $locale === 'en';
-        return [
-        {
-            id: '1',
-            title: $locale === 'en' ? 'Building Scalable Backend Systems with Go' : '使用 Go 构建可扩展后端系统',
-            excerpt: $locale === 'en' 
-                ? 'A deep dive into designing and implementing scalable backend architectures using Go, Docker, and Kubernetes.'
-                : '深入探讨使用 Go、Docker 和 Kubernetes 设计和实现可扩展的后端架构。',
-            content: '',
-            created_at: '2026-03-15T10:00:00Z',
-            updated_at: '2026-03-15T10:00:00Z',
-            tags: ['Go', 'Backend', 'DevOps'],
-            published: true
-        },
-        {
-            id: '2',
-            title: $locale === 'en' ? 'AI Agent Workflows with OpenClaw' : '使用 OpenClaw 构建 AI 智能体工作流',
-            excerpt: $locale === 'en'
-                ? 'How I built autonomous AI agent workflows using OpenClaw and Claude Code for automated task execution.'
-                : '如何使用 OpenClaw 和 Claude Code 构建自主 AI 智能体工作流实现自动化任务执行。',
-            content: '',
-            created_at: '2026-03-10T10:00:00Z',
-            updated_at: '2026-03-10T10:00:00Z',
-            tags: ['AI', 'OpenClaw', 'Automation'],
-            published: true
-        },
-        {
-            id: '3',
-            title: $locale === 'en' ? 'DevOps Best Practices for Small Teams' : '小团队 DevOps 最佳实践',
-            excerpt: $locale === 'en'
-                ? 'Practical DevOps strategies and tools that helped our small team achieve enterprise-level deployment automation.'
-                : '实用的 DevOps 策略和工具，帮助我们的小团队实现企业级部署自动化。',
-            content: '',
-            created_at: '2026-03-05T10:00:00Z',
-            updated_at: '2026-03-05T10:00:00Z',
-            tags: ['DevOps', 'Docker', 'CI/CD'],
-            published: true
-        }
-    ];
-    }
-
-    $: demoPosts = getDemoPosts();
 </script>
 
 <svelte:head>
@@ -119,98 +67,116 @@
     <meta name="description" content="Articles about backend development, AI technologies, DevOps, and lessons learned along the way." />
 </svelte:head>
 
-<div class="max-w-4xl mx-auto px-6 py-20">
-    <section class="space-y-12">
-        <!-- Header -->
-        <div class="space-y-4">
-            <p class="text-sm font-medium text-emerald-400 tracking-wide uppercase font-mono">
-                {t('blog.title')}
-            </p>
-            <h1 class="text-4xl md:text-5xl font-bold tracking-tight">
-                {t('blog.headline')}<br />
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">{t('blog.headline2')}</span>
-            </h1>
-            <p class="text-lg text-gray-400 max-w-xl">
-                {t('blog.subtitle')}
-            </p>
+<div class="max-w-3xl mx-auto px-6 py-20">
+    <header class="mb-16">
+        <h1 class="text-5xl font-bold text-white mb-6">
+            {t('blog.title')}
+        </h1>
+        <p class="text-xl text-gray-400 leading-relaxed">
+            {t('blog.subtitle')}
+        </p>
+    </header>
+
+    {#if loading}
+        <!-- Loading State -->
+        <div class="space-y-6 animate-pulse">
+            {#each Array(3) as _}
+                <div class="p-6 rounded-xl bg-gray-900/50 border border-gray-800">
+                    <div class="h-4 bg-gray-700 rounded w-1/4 mb-4"></div>
+                    <div class="h-6 bg-gray-700 rounded w-3/4 mb-3"></div>
+                    <div class="h-4 bg-gray-700 rounded w-1/2"></div>
+                </div>
+            {/each}
         </div>
-        
-        <!-- Blog Posts -->
-        <div class="border-t border-gray-800 pt-12">
-            {#if loading}
-                <!-- Loading State -->
-                <div class="space-y-6">
-                    {#each [1, 2, 3] as _}
-                        <div class="p-6 rounded-xl bg-gray-900/50 border border-gray-800 animate-pulse">
-                            <div class="h-4 bg-gray-700 rounded w-1/4 mb-4"></div>
-                            <div class="h-6 bg-gray-700 rounded w-3/4 mb-2"></div>
-                            <div class="h-4 bg-gray-700 rounded w-full mb-2"></div>
-                            <div class="h-4 bg-gray-700 rounded w-2/3"></div>
+    {:else if error}
+        <!-- Error State -->
+        <div class="text-center py-20">
+            <p class="text-red-400 mb-4">{error}</p>
+            <p class="text-gray-400">Please try again later or contact the administrator.</p>
+        </div>
+    {:else if !supabaseConfigured}
+        <!-- Demo Posts (when Supabase is not configured) -->
+        <div class="space-y-6">
+            {#each [
+                {
+                    id: '1',
+                    title: 'Building Scalable Backend Systems with Go',
+                    title_zh: '使用 Go 构建可扩展后端系统',
+                    excerpt: 'A deep dive into designing and implementing scalable backend architectures using Go, Docker, and Kubernetes.',
+                    excerpt_zh: '深入探讨使用 Go、Docker 和 Kubernetes 设计和实现可扩展的后端架构。',
+                    tags: ['Go', 'Backend', 'DevOps'],
+                    created_at: '2026-03-15T10:00:00Z'
+                },
+                {
+                    id: '2',
+                    title: 'AI Agent Workflows with OpenClaw',
+                    title_zh: '使用 OpenClaw 构建 AI 智能体工作流',
+                    excerpt: 'How I built autonomous AI agent workflows using OpenClaw and Claude Code for automated task execution.',
+                    excerpt_zh: '如何使用 OpenClaw 和 Claude Code 构建自主 AI 智能体工作流实现自动化任务执行。',
+                    tags: ['AI', 'OpenClaw', 'Automation'],
+                    created_at: '2026-03-10T10:00:00Z'
+                },
+                {
+                    id: '3',
+                    title: 'DevOps Best Practices for Small Teams',
+                    title_zh: '小团队 DevOps 最佳实践',
+                    excerpt: 'Practical DevOps strategies and tools that helped our small team achieve enterprise-level deployment automation.',
+                    excerpt_zh: '实用的 DevOps 策略和工具，帮助我们的小团队实现企业级部署自动化。',
+                    tags: ['DevOps', 'Docker', 'CI/CD'],
+                    created_at: '2026-03-05T10:00:00Z'
+                }
+            ] as post}
+                <a 
+                    href="/blog/{post.id}" 
+                    class="block group p-6 rounded-xl bg-gray-900/50 border border-gray-800 backdrop-blur-sm hover:border-emerald-500/50 transition-all duration-300"
+                >
+                    <article class="space-y-3">
+                        <div class="flex items-center gap-3 text-sm text-gray-500">
+                            <span class="text-emerald-400">{post.tags[0]}</span>
+                            <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+                            <span>{formatDate(post.created_at)}</span>
                         </div>
-                    {/each}
-                </div>
-            {:else if error}
-                <!-- Error State -->
-                <div class="p-6 rounded-xl bg-red-900/20 border border-red-800 text-center">
-                    <p class="text-red-400">{error}</p>
-                </div>
-            {:else if !supabaseConfigured || posts.length === 0}
-                <!-- Demo Posts (when Supabase not configured) -->
-                <div class="space-y-6">
-                    {#each demoPosts as post}
-                        <a 
-                            href="/blog/{post.id}" 
-                            class="block group p-6 rounded-xl bg-gray-900/50 border border-gray-800 backdrop-blur-sm hover:border-emerald-500/50 transition-all duration-300"
-                        >
-                            <article class="space-y-3">
-                                <div class="flex items-center gap-3 text-sm text-gray-500">
-                                    <span class="text-emerald-400">{post.tags[0]}</span>
-                                    <span class="w-1 h-1 rounded-full bg-gray-600"></span>
-                                    <span>{formatDate(post.created_at)}</span>
-                                </div>
-                                <h2 class="text-xl font-semibold text-white group-hover:text-emerald-400 transition-colors">
-                                    {post.title}
-                                </h2>
-                                <p class="text-gray-400 leading-relaxed">
-                                    {post.excerpt}
-                                </p>
-                                <div class="flex items-center gap-2 text-sm text-emerald-400 pt-2">
-                                    <span>{t('blog.readMore')}</span>
-                                </div>
-                            </article>
-                        </a>
-                    {/each}
-                </div>
-            {:else}
-                <!-- Real Posts from Supabase -->
-                <div class="space-y-6">
-                    {#each posts as post}
-                        <a 
-                            href="/blog/{post.id}" 
-                            class="block group p-6 rounded-xl bg-gray-900/50 border border-gray-800 backdrop-blur-sm hover:border-emerald-500/50 transition-all duration-300"
-                        >
-                            <article class="space-y-3">
-                                <div class="flex items-center gap-3 text-sm text-gray-500">
-                                    {#if post.tags && post.tags.length > 0}
-                                        <span class="text-emerald-400">{post.tags[0]}</span>
-                                        <span class="w-1 h-1 rounded-full bg-gray-600"></span>
-                                    {/if}
-                                    <span>{formatDate(post.created_at)}</span>
-                                </div>
-                                <h2 class="text-xl font-semibold text-white group-hover:text-emerald-400 transition-colors">
-                                    {post.title}
-                                </h2>
-                                <p class="text-gray-400 leading-relaxed">
-                                    {post.excerpt || post.content.substring(0, 150)}...
-                                </p>
-                                <div class="flex items-center gap-2 text-sm text-emerald-400 pt-2">
-                                    <span>{t('blog.readMore')}</span>
-                                </div>
-                            </article>
-                        </a>
-                    {/each}
-                </div>
-            {/if}
+                        <h2 class="text-xl font-semibold text-white group-hover:text-emerald-400 transition-colors">
+                            {$locale === 'en' ? post.title : post.title_zh}
+                        </h2>
+                        <p class="text-gray-400 leading-relaxed">
+                            {$locale === 'en' ? post.excerpt : post.excerpt_zh}
+                        </p>
+                        <div class="flex items-center gap-2 text-sm text-emerald-400 pt-2">
+                            <span>{t('blog.readMore')}</span>
+                        </div>
+                    </article>
+                </a>
+            {/each}
         </div>
-    </section>
+    {:else}
+        <!-- Real Posts from Supabase -->
+        <div class="space-y-6">
+            {#each posts as post}
+                <a 
+                    href="/blog/{post.id}" 
+                    class="block group p-6 rounded-xl bg-gray-900/50 border border-gray-800 backdrop-blur-sm hover:border-emerald-500/50 transition-all duration-300"
+                >
+                    <article class="space-y-3">
+                        <div class="flex items-center gap-3 text-sm text-gray-500">
+                            {#if post.tags && post.tags.length > 0}
+                                <span class="text-emerald-400">{post.tags[0]}</span>
+                                <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+                            {/if}
+                            <span>{formatDate(post.created_at)}</span>
+                        </div>
+                        <h2 class="text-xl font-semibold text-white group-hover:text-emerald-400 transition-colors">
+                            {$locale === 'en' ? post.title : post.title_zh}
+                        </h2>
+                        <p class="text-gray-400 leading-relaxed">
+                            {$locale === 'en' ? post.excerpt : post.excerpt_zh}
+                        </p>
+                        <div class="flex items-center gap-2 text-sm text-emerald-400 pt-2">
+                            <span>{t('blog.readMore')}</span>
+                        </div>
+                    </article>
+                </a>
+            {/each}
+        </div>
+    {/if}
 </div>
