@@ -10,8 +10,8 @@
         title_zh: string;
         excerpt: string;
         excerpt_zh: string;
-        content_en_path: string;
-        content_zh_path: string;
+        content_en: string;
+        content_zh: string;
         created_at: string;
         tags: string[];
         published: boolean;
@@ -20,7 +20,6 @@
     let post: BlogPost | null = null;
     let loading = true;
     let error = '';
-    let content = '';
 
     onMount(async () => {
         const slug = $page.params.slug;
@@ -34,9 +33,9 @@
         }
 
         try {
-            // 1. 从数据库获取文章元数据
+            // 直接从数据库获取完整内容（包含 content_en 和 content_zh）
             const response = await fetch(
-                `${supabaseUrl}/rest/v1/posts?id=eq.${slug}&select=id,title,title_zh,excerpt,excerpt_zh,content_en_path,content_zh_path,tags,created_at&published=eq.true`,
+                `${supabaseUrl}/rest/v1/posts?id=eq.${slug}&select=*`,
                 {
                     headers: {
                         'apikey': supabaseAnonKey,
@@ -48,19 +47,6 @@
             if (response.ok) {
                 const data = await response.json();
                 post = data.length > 0 ? data[0] : null;
-
-                // 2. 从 Storage 读取内容
-                if (post) {
-                    const contentPath = $locale === 'en' ? post.content_en_path : post.content_zh_path;
-                    const contentUrl = `${supabaseUrl}/storage/v1/object/public/${contentPath}`;
-
-                    const contentResponse = await fetch(contentUrl);
-                    if (contentResponse.ok) {
-                        content = await contentResponse.text();
-                    } else {
-                        error = 'Failed to fetch content from storage';
-                    }
-                }
             } else {
                 error = 'Failed to fetch post';
             }
@@ -153,16 +139,16 @@
                 {/if}
             </header>
 
-            <!-- Content from Storage -->
-            {#if content}
+            <!-- Content from Database -->
+            {#if post.content_en || post.content_zh}
                 <div class="prose prose-invert prose-emerald max-w-none">
                     <div class="text-gray-300 leading-relaxed">
-                        {@html renderMarkdown(content)}
+                        {@html renderMarkdown($locale === 'en' ? post.content_en : post.content_zh)}
                     </div>
                 </div>
             {:else}
                 <div class="text-center py-10">
-                    <p class="text-gray-400">Content loading...</p>
+                    <p class="text-gray-400">No content available.</p>
                 </div>
             {/if}
 
