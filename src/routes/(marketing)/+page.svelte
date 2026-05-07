@@ -31,7 +31,7 @@
         zh: {
             greeting: '// 后端工程师',
             title: '你好，我是',
-            name: '蔡金海。',
+            name: 'Cesar。',
             subtitle: '我构建强大的后端系统和 AI 应用。热爱简洁代码、可扩展架构和 DevOps 自动化。',
             readBlog: '阅读博客',
             learnMore: '了解更多',

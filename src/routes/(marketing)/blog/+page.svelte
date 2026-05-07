@@ -36,7 +36,9 @@
             const response = await fetch(`${supabaseUrl}/rest/v1/posts?select=*&published=eq.true&order=created_at.desc`, {
                 headers: {
                     'apikey': supabaseAnonKey,
-                    'Authorization': `Bearer ${supabaseAnonKey}`
+                    'Authorization': `Bearer ${supabaseAnonKey}`,
+                    'Accept-Profile': 'website',
+                    'Content-Profile': 'website'
                 }
             });
 
