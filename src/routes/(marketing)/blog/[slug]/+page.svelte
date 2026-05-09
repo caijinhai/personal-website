@@ -137,33 +137,38 @@
         </div>
     {:else if post}
         <!-- Article -->
-        <article class="space-y-8">
+        <article>
             <!-- Back Link -->
-            <a href="/blog" class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-emerald-400 transition-colors">
-                ← {t('article.back')}
+            <a href="/blog" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-emerald-400 transition-colors mb-12">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                {t('article.back')}
             </a>
 
             <!-- Header -->
-            <header class="space-y-4">
-                <div class="flex items-center gap-3 text-sm text-gray-500">
+            <header class="space-y-6 pb-8 border-b border-gray-800">
+                <div class="flex items-center gap-3 text-sm">
                     {#if post.tags && post.tags.length > 0}
-                        <span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-xs font-medium">
-                            {post.tags[0]}
-                        </span>
-                        <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+                        {#each post.tags as tag}
+                            <span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-xs font-medium">
+                                {tag}
+                            </span>
+                        {/each}
                     {/if}
-                    <span>{t('article.published')} {formatDate(post.created_at)}</span>
                 </div>
 
-                <h1 class="text-3xl md:text-4xl font-bold text-white leading-tight">
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
                     {$locale === 'en' ? post.title : post.title_zh}
                 </h1>
 
                 {#if post.excerpt || post.excerpt_zh}
-                    <p class="text-xl text-gray-400 leading-relaxed">
+                    <p class="text-lg text-gray-400 leading-relaxed max-w-2xl">
                         {$locale === 'en' ? post.excerpt : post.excerpt_zh}
                     </p>
                 {/if}
+
+                <div class="flex items-center gap-4 text-sm text-gray-500">
+                    <span>{t('article.published')} {formatDate(post.created_at)}</span>
+                </div>
             </header>
 
             <!-- Content from Storage -->
@@ -174,17 +179,6 @@
             {:else}
                 <div class="text-center py-10">
                     <p class="text-gray-400">Content loading...</p>
-                </div>
-            {/if}
-
-            <!-- Tags -->
-            {#if post.tags && post.tags.length > 0}
-                <div class="flex flex-wrap gap-2 pt-8 border-t border-gray-800">
-                    {#each post.tags as tag}
-                        <span class="px-3 py-1 bg-gray-900/50 text-gray-400 text-sm rounded-full border border-gray-700">
-                            {tag}
-                        </span>
-                    {/each}
                 </div>
             {/if}
         </article>
@@ -201,236 +195,292 @@
 </div>
 
 <style>
-    .prose-content {
+    :global(.prose-content) {
         color: #d1d5db;
         line-height: 1.8;
         font-size: 1.05rem;
+        padding-top: 2rem;
     }
-    .prose-content h1 {
+    :global(.prose-content h1) {
         font-size: 1.875rem;
         font-weight: 700;
         color: #fff;
-        margin-top: 3rem;
+        margin-top: 3.5rem;
         margin-bottom: 1.5rem;
         line-height: 1.3;
+        letter-spacing: -0.025em;
     }
-    .prose-content h2 {
+    :global(.prose-content h2) {
         font-size: 1.5rem;
         font-weight: 600;
         color: #fff;
-        margin-top: 2.5rem;
+        margin-top: 3rem;
         margin-bottom: 1.25rem;
         line-height: 1.3;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid #374151;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #1f2937;
+        letter-spacing: -0.01em;
     }
-    .prose-content h3 {
+    :global(.prose-content h3) {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #fff;
-        margin-top: 2rem;
+        color: #e5e7eb;
+        margin-top: 2.5rem;
         margin-bottom: 1rem;
     }
-    .prose-content p {
-        margin-bottom: 1.25rem;
+    :global(.prose-content h4) {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #e5e7eb;
+        margin-top: 2rem;
+        margin-bottom: 0.75rem;
     }
-    .prose-content a {
+    :global(.prose-content p) {
+        margin-bottom: 1.5rem;
+        color: #9ca3af;
+    }
+    :global(.prose-content a) {
         color: #34d399;
         text-decoration: none;
         border-bottom: 1px solid rgba(52, 211, 153, 0.3);
-        transition: border-color 0.2s;
+        transition: all 0.2s;
     }
-    .prose-content a:hover {
-        border-bottom-color: #34d399;
+    :global(.prose-content a:hover) {
+        color: #6ee7b7;
+        border-bottom-color: #6ee7b7;
     }
-    .prose-content strong {
-        color: #fff;
+    :global(.prose-content strong) {
+        color: #f3f4f6;
         font-weight: 600;
     }
-    .prose-content em {
+    :global(.prose-content em) {
         font-style: italic;
+        color: #d1d5db;
     }
-    .prose-content ul, .prose-content ol {
-        margin-bottom: 1.25rem;
-        padding-left: 1.5rem;
+    :global(.prose-content hr) {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, #374151, transparent);
+        margin: 3rem 0;
     }
-    .prose-content ul {
-        list-style: none;
+    :global(.prose-content ul),
+    :global(.prose-content ol) {
+        margin-bottom: 1.5rem;
         padding-left: 0;
     }
-    .prose-content ul li {
-        position: relative;
-        padding-left: 1.25rem;
-        margin-bottom: 0.5rem;
+    :global(.prose-content ul) {
+        list-style: none;
     }
-    .prose-content ul li::before {
+    :global(.prose-content ul li) {
+        position: relative;
+        padding-left: 1.5rem;
+        margin-bottom: 0.75rem;
+        color: #9ca3af;
+    }
+    :global(.prose-content ul li::before) {
         content: '';
         position: absolute;
         left: 0;
-        top: 0.75em;
-        width: 5px;
-        height: 5px;
+        top: 0.85em;
+        width: 6px;
+        height: 6px;
         background: #34d399;
         border-radius: 50%;
+        box-shadow: 0 0 6px rgba(52, 211, 153, 0.3);
     }
-    .prose-content ol {
-        list-style: decimal;
-        list-style-position: inside;
+    :global(.prose-content ol) {
+        list-style: none;
+        counter-reset: item;
     }
-    .prose-content ol li {
-        margin-bottom: 0.5rem;
-    }
-    .prose-content li {
+    :global(.prose-content ol li) {
+        position: relative;
+        padding-left: 2.5rem;
+        margin-bottom: 0.75rem;
         color: #9ca3af;
+        counter-increment: item;
     }
-    .prose-content code {
+    :global(.prose-content ol li::before) {
+        content: counter(item);
+        position: absolute;
+        left: 0;
+        top: 0.15em;
+        width: 1.75rem;
+        height: 1.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #1f2937;
+        color: #34d399;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 6px;
+        border: 1px solid #374151;
+    }
+    :global(.prose-content li > ul),
+    :global(.prose-content li > ol) {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+    }
+    :global(.prose-content p code),
+    :global(.prose-content li code),
+    :global(.prose-content h1 code),
+    :global(.prose-content h2 code),
+    :global(.prose-content h3 code) {
         font-family: ui-monospace, 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
-        font-size: 0.875em;
-    }
-    .prose-content p code,
-    .prose-content li code {
         background: #1f2937;
         color: #fbbf24;
-        padding: 0.15em 0.4em;
-        border-radius: 4px;
+        padding: 0.2em 0.45em;
+        border-radius: 5px;
         border: 1px solid #374151;
+        font-weight: 500;
+        font-size: 0.875em;
     }
-    .prose-content pre {
-        background: #1e1e2e !important;
-        border: 1px solid #374151;
+    :global(.prose-content pre) {
+        background: #0f172a !important;
+        border: 1px solid #1e293b;
         border-radius: 12px;
-        padding: 1.25rem;
-        margin: 1.5rem 0;
-        overflow-x: auto;
-        position: relative;
+        margin: 2rem 0;
+        overflow: hidden;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
     }
-    .prose-content pre code {
-        background: none;
-        border: none;
-        padding: 0;
-        color: inherit;
+    :global(.prose-content pre code) {
+        display: block;
+        padding: 1.25rem 1.5rem;
+        overflow-x: auto;
         font-size: 0.875rem;
         line-height: 1.7;
-    }
-    .prose-content hr {
+        background: none !important;
         border: none;
-        height: 1px;
-        background: #374151;
-        margin: 2.5rem 0;
+        color: #e2e8f0;
     }
-    .prose-content blockquote {
-        border-left: 3px solid #34d399;
-        padding-left: 1rem;
-        margin: 1.5rem 0;
+    :global(.prose-content blockquote) {
+        position: relative;
+        margin: 2rem 0;
+        padding: 1.25rem 1.5rem 1.25rem 2rem;
+        background: rgba(52, 211, 153, 0.03);
+        border: 1px solid rgba(52, 211, 153, 0.15);
+        border-left: 4px solid #34d399;
+        border-radius: 0 10px 10px 0;
         color: #9ca3af;
         font-style: italic;
-        background: rgba(52, 211, 153, 0.05);
-        padding: 1rem 1rem 1rem 1.25rem;
-        border-radius: 0 8px 8px 0;
     }
-    .prose-content table {
+    :global(.prose-content blockquote::before) {
+        content: '"';
+        position: absolute;
+        top: -0.25rem;
+        left: 0.5rem;
+        font-size: 3rem;
+        color: rgba(52, 211, 153, 0.2);
+        font-family: Georgia, serif;
+        line-height: 1;
+    }
+    :global(.prose-content blockquote p:last-child) {
+        margin-bottom: 0;
+    }
+    :global(.prose-content table) {
         width: 100%;
-        margin: 1.5rem 0;
-        border-collapse: collapse;
-        border: 1px solid #374151;
-        border-radius: 8px;
+        margin: 2rem 0;
+        border-collapse: separate;
+        border-spacing: 0;
+        border: 1px solid #1f2937;
+        border-radius: 10px;
         overflow: hidden;
+        background: rgba(17, 24, 39, 0.5);
     }
-    .prose-content th {
-        background: #1f2937;
-        color: #fff;
+    :global(.prose-content th) {
+        background: #111827;
+        color: #f3f4f6;
         font-weight: 600;
-        padding: 0.75rem 1rem;
+        padding: 0.875rem 1.25rem;
         text-align: left;
         border-bottom: 2px solid #374151;
     }
-    .prose-content td {
-        padding: 0.625rem 1rem;
+    :global(.prose-content td) {
+        padding: 0.75rem 1.25rem;
         border-bottom: 1px solid #1f2937;
         color: #d1d5db;
     }
-    .prose-content tr:last-child td {
+    :global(.prose-content tr:last-child td) {
         border-bottom: none;
     }
-    .prose-content tr:hover td {
+    :global(.prose-content tbody tr:hover) {
         background: rgba(52, 211, 153, 0.03);
     }
-    .prose-content img {
+    :global(.prose-content img) {
         border-radius: 12px;
-        margin: 1.5rem 0;
-        border: 1px solid #374151;
+        margin: 2rem 0;
+        border: 1px solid #1f2937;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
     }
 
     /* highlight.js atom-one-dark theme */
-    .prose-content pre code.hljs {
-        display: block;
-        overflow-x: auto;
-        padding: 1em;
+    :global(.prose-content pre code.hljs) {
+        padding: 1.25rem 1.5rem;
     }
-    .prose-content code.hljs {
+    :global(.prose-content code.hljs) {
         padding: 3px 5px;
     }
-    .prose-content .hljs {
+    :global(.prose-content .hljs) {
         color: #abb2bf;
         background: transparent;
     }
-    .prose-content .hljs-comment,
-    .prose-content .hljs-quote {
+    :global(.prose-content .hljs-comment),
+    :global(.prose-content .hljs-quote) {
         color: #5c6370;
         font-style: italic;
     }
-    .prose-content .hljs-doctag,
-    .prose-content .hljs-keyword,
-    .prose-content .hljs-formula {
+    :global(.prose-content .hljs-doctag),
+    :global(.prose-content .hljs-keyword),
+    :global(.prose-content .hljs-formula) {
         color: #c678dd;
     }
-    .prose-content .hljs-section,
-    .prose-content .hljs-name,
-    .prose-content .hljs-selector-tag,
-    .prose-content .hljs-deletion,
-    .prose-content .hljs-subst {
+    :global(.prose-content .hljs-section),
+    :global(.prose-content .hljs-name),
+    :global(.prose-content .hljs-selector-tag),
+    :global(.prose-content .hljs-deletion),
+    :global(.prose-content .hljs-subst) {
         color: #e06c75;
     }
-    .prose-content .hljs-literal {
+    :global(.prose-content .hljs-literal) {
         color: #56b6c2;
     }
-    .prose-content .hljs-string,
-    .prose-content .hljs-regexp,
-    .prose-content .hljs-addition,
-    .prose-content .hljs-attribute,
-    .prose-content .hljs-meta .hljs-string {
+    :global(.prose-content .hljs-string),
+    :global(.prose-content .hljs-regexp),
+    :global(.prose-content .hljs-addition),
+    :global(.prose-content .hljs-attribute),
+    :global(.prose-content .hljs-meta .hljs-string) {
         color: #98c379;
     }
-    .prose-content .hljs-attr,
-    .prose-content .hljs-variable,
-    .prose-content .hljs-template-variable,
-    .prose-content .hljs-type,
-    .prose-content .hljs-selector-class,
-    .prose-content .hljs-selector-attr,
-    .prose-content .hljs-selector-pseudo,
-    .prose-content .hljs-number {
+    :global(.prose-content .hljs-attr),
+    :global(.prose-content .hljs-variable),
+    :global(.prose-content .hljs-template-variable),
+    :global(.prose-content .hljs-type),
+    :global(.prose-content .hljs-selector-class),
+    :global(.prose-content .hljs-selector-attr),
+    :global(.prose-content .hljs-selector-pseudo),
+    :global(.prose-content .hljs-number) {
         color: #d19a66;
     }
-    .prose-content .hljs-symbol,
-    .prose-content .hljs-bullet,
-    .prose-content .hljs-link,
-    .prose-content .hljs-meta,
-    .prose-content .hljs-selector-id,
-    .prose-content .hljs-title {
+    :global(.prose-content .hljs-symbol),
+    :global(.prose-content .hljs-bullet),
+    :global(.prose-content .hljs-link),
+    :global(.prose-content .hljs-meta),
+    :global(.prose-content .hljs-selector-id),
+    :global(.prose-content .hljs-title) {
         color: #61aeee;
     }
-    .prose-content .hljs-built_in,
-    .prose-content .hljs-title\.class_,
-    .prose-content .hljs-class .hljs-title {
+    :global(.prose-content .hljs-built_in),
+    :global(.prose-content .hljs-title\.class_),
+    :global(.prose-content .hljs-class .hljs-title) {
         color: #e6c07b;
     }
-    .prose-content .hljs-emphasis {
+    :global(.prose-content .hljs-emphasis) {
         font-style: italic;
     }
-    .prose-content .hljs-strong {
+    :global(.prose-content .hljs-strong) {
         font-weight: bold;
     }
-    .prose-content .hljs-link {
+    :global(.prose-content .hljs-link) {
         text-decoration: underline;
     }
 </style>
