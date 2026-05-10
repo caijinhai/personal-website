@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 	try {
 		// 1. Fetch post metadata from database
 		const response = await fetch(
-			`${SUPABASE_URL}/rest/v1/posts?slug=eq.${slug}&select=id,title,title_zh,excerpt,excerpt_zh,content_en_path,content_zh_path,tags,created_at&published=eq.true`,
+			`${SUPABASE_URL}/rest/v1/posts?id=eq.${slug}&select=id,title,title_zh,excerpt,excerpt_zh,content_en_path,content_zh_path,tags,created_at&published=eq.true`,
 			{
 				headers: {
 					'apikey': SUPABASE_ANON_KEY,
