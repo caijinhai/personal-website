@@ -1,13 +1,27 @@
 import { createServerClient } from '@supabase/ssr';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { Handle } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
+
+function getSupabaseEnv(event: any): { url: string; anonKey: string } {
+	// Cloudflare Pages: secrets 通过 event.platform.env 注入
+	// 本地 Node.js 开发: process.env 可用
+	const platformEnv = event.platform?.env || {};
+	const nodeEnv = (typeof process !== 'undefined' && process.env) || {};
+
+	const env = { ...nodeEnv, ...platformEnv };
+	return {
+		url: (env.SUPABASE_URL || env.PUBLIC_SUPABASE_URL || '') as string,
+		anonKey: (env.SUPABASE_ANON_KEY || env.PUBLIC_SUPABASE_ANON_KEY || '') as string
+	};
+}
 
 const supabase: Handle = async ({ event, resolve }) => {
-	const SUPABASE_URL = env.SUPABASE_URL || '';
-	const SUPABASE_ANON_KEY = env.SUPABASE_ANON_KEY || '';
+	const { url: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY } = getSupabaseEnv(event);
 
 	if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+		console.error('[hooks] Supabase not configured');
+		event.locals.supabase = null;
+		event.locals.safeGetSession = async () => ({ session: null, user: null });
 		return resolve(event);
 	}
 

@@ -1,10 +1,20 @@
 import type { PageServerLoad } from './$types';
-import { env } from '$env/dynamic/private';
 
-export const load: PageServerLoad = async ({ params, fetch }) => {
+function getSupabaseEnv(platform?: { env?: Record<string, string> }): { url: string; anonKey: string } {
+	// Cloudflare Pages: secrets 通过 platform.env 注入
+	// 本地 Node.js 开发: process.env 可用
+	const platformEnv = platform?.env || {};
+	const nodeEnv = (typeof process !== 'undefined' && process.env) || {};
+	const env: Record<string, string> = { ...nodeEnv, ...platformEnv } as Record<string, string>;
+	return {
+		url: env.SUPABASE_URL || env.PUBLIC_SUPABASE_URL || '',
+		anonKey: env.SUPABASE_ANON_KEY || env.PUBLIC_SUPABASE_ANON_KEY || ''
+	};
+}
+
+export const load: PageServerLoad = async ({ params, fetch, platform }) => {
 	const slug = params.slug;
-	const SUPABASE_URL = env.PUBLIC_SUPABASE_URL || env.SUPABASE_URL || '';
-	const SUPABASE_ANON_KEY = env.PUBLIC_SUPABASE_ANON_KEY || env.SUPABASE_ANON_KEY || '';
+	const { url: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY } = getSupabaseEnv(platform);
 
 	if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
 		return { post: null, content: '', configured: false };
