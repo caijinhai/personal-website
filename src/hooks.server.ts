@@ -1,19 +1,15 @@
-import { createServerClient, isBrowser } from '@supabase/ssr';
+import { createServerClient } from '@supabase/ssr';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { Handle } from '@sveltejs/kit';
-import { env } from '$env/dynamic/public';
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '$env/static/private';
 
 const supabase: Handle = async ({ event, resolve }) => {
-	const supabaseUrl = env.PUBLIC_SUPABASE_URL || '';
-	const supabaseAnonKey = env.PUBLIC_SUPABASE_ANON_KEY || '';
-
-	if (!supabaseUrl || !supabaseAnonKey) {
-		console.error('Missing Supabase environment variables');
+	if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
 		return resolve(event);
 	}
 
 	try {
-		event.locals.supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+		event.locals.supabase = createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 			cookies: {
 				getAll: () => event.cookies.getAll(),
 				setAll: (cookiesToSet) => {
