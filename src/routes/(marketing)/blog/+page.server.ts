@@ -1,7 +1,10 @@
 import type { PageServerLoad } from './$types';
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 export const load: PageServerLoad = async ({ fetch }) => {
+	const SUPABASE_URL = env.SUPABASE_URL || '';
+	const SUPABASE_ANON_KEY = env.SUPABASE_ANON_KEY || '';
+
 	if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
 		return { posts: [], configured: false };
 	}
