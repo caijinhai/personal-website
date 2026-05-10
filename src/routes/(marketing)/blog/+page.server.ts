@@ -1,19 +1,33 @@
 import type { PageServerLoad } from './$types';
 
-function getSupabaseEnv(platform?: { env?: Record<string, string> }): { url: string; anonKey: string } {
-	// Cloudflare Pages: secrets 通过 platform.env 注入
-	// 本地 Node.js 开发: process.env 可用
-	const platformEnv = platform?.env || {};
-	const nodeEnv = (typeof process !== 'undefined' && process.env) || {};
-	const env: Record<string, string> = { ...nodeEnv, ...platformEnv } as Record<string, string>;
-	return {
-		url: env.SUPABASE_URL || env.PUBLIC_SUPABASE_URL || '',
-		anonKey: env.SUPABASE_ANON_KEY || env.PUBLIC_SUPABASE_ANON_KEY || ''
-	};
+function getSupabaseConfig(platform?: any): { url: string; anonKey: string } {
+	// Cloudflare Pages: secrets 通过 env 对象注入
+	// 1. 尝试 platform.env（SvelteKit adapter-cloudflare 方式）
+	// 2. 尝试 event.platform.env（hooks 中）
+	// 3. 尝试 process.env（本地开发）
+	const sources = [
+		platform?.env || {},
+		(typeof process !== 'undefined' && process.env) || {}
+	];
+
+	for (const src of sources) {
+		const url = src.SUPABASE_URL || src.PUBLIC_SUPABASE_URL || '';
+		const anonKey = src.SUPABASE_ANON_KEY || src.PUBLIC_SUPABASE_ANON_KEY || '';
+		if (url && anonKey) {
+			return { url, anonKey };
+		}
+	}
+
+	// Fallback: 检查全局变量（Cloudflare Workers 直接暴露为全局）
+	if (typeof SUPABASE_URL !== 'undefined' && typeof SUPABASE_ANON_KEY !== 'undefined') {
+		return { url: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY };
+	}
+
+	return { url: '', anonKey: '' };
 }
 
 export const load: PageServerLoad = async ({ fetch, platform }) => {
-	const { url: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY } = getSupabaseEnv(platform);
+	const { url: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY } = getSupabaseConfig(platform);
 
 	if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
 		return { posts: [], configured: false };
@@ -33,8 +47,8 @@ export const load: PageServerLoad = async ({ fetch, platform }) => {
 			const posts = await response.json();
 			return { posts, configured: true };
 		}
-		return { posts: [], configured: false, error: 'Failed to fetch posts' };
-	} catch (e) {
-		return { posts: [], configured: false, error: 'Failed to connect to database' };
+		return { posts: [], configured: true, error: 'Failed to fetch posts' };
+	} catch (e: any) {
+		return { posts: [], configured: true, error: String(e.message || e) };
 	}
 };
