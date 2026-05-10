@@ -3,15 +3,14 @@ import { env } from '$env/dynamic/private';
 
 export const load: PageServerLoad = async ({ params, fetch }) => {
 	const slug = params.slug;
-	const SUPABASE_URL = env.SUPABASE_URL || '';
-	const SUPABASE_ANON_KEY = env.SUPABASE_ANON_KEY || '';
+	const SUPABASE_URL = env.PUBLIC_SUPABASE_URL || env.SUPABASE_URL || '';
+	const SUPABASE_ANON_KEY = env.PUBLIC_SUPABASE_ANON_KEY || env.SUPABASE_ANON_KEY || '';
 
 	if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
 		return { post: null, content: '', configured: false };
 	}
 
 	try {
-		// 1. Fetch post metadata from database
 		const response = await fetch(
 			`${SUPABASE_URL}/rest/v1/posts?id=eq.${slug}&select=id,title,title_zh,excerpt,excerpt_zh,content_en_path,content_zh_path,tags,created_at&published=eq.true`,
 			{
@@ -35,7 +34,6 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 			return { post: null, content: '' };
 		}
 
-		// 2. Fetch content from Storage (use default path, will be overridden by locale in page)
 		const contentPath = post.content_zh_path || post.content_en_path;
 		let content = '';
 
