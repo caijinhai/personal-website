@@ -12,6 +12,7 @@
             home: 'Home',
             about: 'About',
             blog: 'Blog',
+            docs: 'Docs',
             github: 'GitHub',
             switchLang: '中文'
         },
@@ -19,6 +20,7 @@
             home: '首页',
             about: '关于',
             blog: '博客',
+            docs: '文档',
             github: 'GitHub',
             switchLang: 'EN'
         }
@@ -45,6 +47,9 @@
                 <a href="/blog" class={`text-sm font-medium transition-colors ${isActive('/blog') ? 'text-emerald-400' : 'text-gray-400 hover:text-white'}`}>
                     {langText.blog}
                 </a>
+                <a href="https://hots.cesarcai.site" target="_blank" rel="noopener" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    {langText.docs}
+                </a>
                 <a href="https://github.com/caijinhai" target="_blank" rel="noopener" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">
                     {langText.github}
                 </a>
@@ -70,6 +75,7 @@
         <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
             <p>© 2026 Cesar Cai. All rights reserved.</p>
             <div class="flex gap-6">
+                <a href="https://hots.cesarcai.site" target="_blank" rel="noopener" class="hover:text-emerald-400 transition-colors">Docs</a>
                 <a href="https://github.com/caijinhai" target="_blank" rel="noopener" class="hover:text-emerald-400 transition-colors">GitHub</a>
                 <a href="/blog" class="hover:text-emerald-400 transition-colors">Blog</a>
             </div>
